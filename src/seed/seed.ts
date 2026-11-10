@@ -1,5 +1,4 @@
-// Seeds device units through the repository port. Safe to run more than once.
-
+// Seeds device units through the repository port (safe to run more than once)
 import { getDeviceRepo } from '../config/appServices';
 import { createDevice } from '../domain/device';
 import { buildUnits, CATALOGUE_MODEL_IDS } from './units';

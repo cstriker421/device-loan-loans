@@ -1,7 +1,7 @@
 import { app } from '@azure/functions';
 import type { HttpResponseInit } from '@azure/functions';
 
-// GET /api/health: the process is up. (A readiness check that touches Cosmos can come later.)
+// GET /api/health: the process is up
 app.http('health-http', {
   methods: ['GET'],
   authLevel: 'anonymous',

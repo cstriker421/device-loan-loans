@@ -1,7 +1,6 @@
 // Adapter tests run against FakeContainer: an in-memory stand-in that imitates the
-// Cosmos behaviours the adapters rely on (ETags, 409/412 errors, per-partition unique key).
-// It does NOT prove the real service behaves identically: that is checked against Azure.
-
+// Cosmos behaviours the adapters rely on (ETags, 409/412 errors, per-partition unique key)
+// Doesn't prove the real service behaves identically (we check that against Azure)
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 import type { Container } from '@azure/cosmos';

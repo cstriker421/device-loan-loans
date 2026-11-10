@@ -1,11 +1,11 @@
-// Domain layer: one physical device that can be lent. Pure rules, no I/O, no SDKs.
+// Domain layer (one physical device that can be lent, only rules)
 
 import { DomainValidationError, InvalidTransitionError } from './errors';
 
 export const DEVICE_STATUSES = ['available', 'reserved', 'on-loan'] as const;
 export type DeviceStatus = (typeof DEVICE_STATUSES)[number];
 
-/** A single unit. `modelId` points at a device model in the Catalogue Service. */
+/** A single unit. `modelId` points at a device model in the catalogue service */
 export type Device = Readonly<{
   id: string;
   modelId: string;
@@ -13,7 +13,7 @@ export type Device = Readonly<{
   status: DeviceStatus;
 }>;
 
-/** What callers hand to the factory. Untrusted: it may come straight from JSON. */
+/** What callers hand to the factory (untrusted. It may come straight from json) */
 export type NewDevice = {
   id: string;
   modelId: string;
@@ -26,7 +26,7 @@ const ASSET_TAG_PATTERN = /^[A-Za-z0-9_-]{1,32}$/;
 const matches = (value: unknown, pattern: RegExp): value is string =>
   typeof value === 'string' && pattern.test(value);
 
-/** Factory: validates the input and returns a new device, available for loan. */
+/** Factory (validates the input and returns a new device that's available for loan) */
 export function createDevice(input: NewDevice): Device {
   const issues: string[] = [];
 
@@ -63,14 +63,14 @@ function move(device: Device, from: DeviceStatus, to: DeviceStatus): Device {
 export const reserveDevice = (device: Device): Device =>
   move(device, 'available', 'reserved');
 
-/** reserved -> available (a reservation is cancelled, or a failed reserve is undone) */
+/** reserved -> available (a reservation is cancelled or a failed reserve is undone) */
 export const releaseDevice = (device: Device): Device =>
   move(device, 'reserved', 'available');
 
-/** reserved -> on-loan (the student collects it) */
+/** reserved -> on-loan (the user collects it) */
 export const collectDevice = (device: Device): Device =>
   move(device, 'reserved', 'on-loan');
 
-/** on-loan -> available (it is handed back) */
+/** on loan -> available (it is handed back) */
 export const returnDevice = (device: Device): Device =>
   move(device, 'on-loan', 'available');

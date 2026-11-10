@@ -1,6 +1,6 @@
-// Domain errors. Plain classes: no framework, no I/O.
+// Domain errors (plain classes, no framework, no I/O)
 
-/** Input broke a domain rule. `issues` lists every problem found. */
+/** Input broke a domain rule (`issues` lists every problem found) */
 export class DomainValidationError extends Error {
   readonly issues: readonly string[];
 
@@ -11,7 +11,7 @@ export class DomainValidationError extends Error {
   }
 }
 
-/** An operation is not allowed from the entity's current status. */
+/** An operation isn't allowed from the entity's current status */
 export class InvalidTransitionError extends Error {
   readonly entity: string;
   readonly from: string;

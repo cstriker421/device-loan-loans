@@ -1,5 +1,5 @@
-// Rebuilds domain objects from stored data. Unlike the factories (which start a new
-// lifecycle), these accept any valid status, and they re-check everything that was stored.
+// Rebuilds domain objects from stored data (these accept any valid status
+// and they re-check everything that was stored)
 
 import { DomainValidationError } from './errors';
 import { createDevice, DEVICE_STATUSES } from './device';

@@ -1,9 +1,9 @@
-// Types and errors shared by the repository ports. No Azure, no I/O.
+// Types and errors shared by the repository ports (no Azure nor I/O)
 
-/** A stored entity plus an opaque token identifying the exact stored version. */
+/** A stored entity plus an opaque token identifying the exact stored version */
 export type Versioned<T> = Readonly<{ item: T; version: string }>;
 
-/** The stored version changed since it was read, so the write was refused. */
+/** The stored version changed since it was read, so the write is refused */
 export class ConcurrencyError extends Error {
   readonly entity: string;
   readonly id: string;
@@ -16,7 +16,7 @@ export class ConcurrencyError extends Error {
   }
 }
 
-/** An entity with the same identity (or the same idempotency key) already exists. */
+/** An entity with the same identity (or the same idempotency key) already exists */
 export class DuplicateError extends Error {
   readonly entity: string;
   readonly key: string;
@@ -29,7 +29,7 @@ export class DuplicateError extends Error {
   }
 }
 
-/** The entity to update does not exist. */
+/** The entity to update doesn't exist */
 export class NotFoundError extends Error {
   readonly entity: string;
   readonly id: string;

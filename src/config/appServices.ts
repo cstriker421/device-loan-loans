@@ -1,6 +1,6 @@
-// Composition root: the one place that decides which adapters the app uses.
-// Cosmos settings come from environment variables, so each environment
-// (dev on your machine, test in Azure) can point at its own database.
+// Composition root (the place that decides which adapters the app uses)
+// Cosmos settings come from env vars, so each env (dev on work machine, test in Azure)
+// can point at its own db
 
 import { randomUUID } from 'node:crypto';
 import type { Logger } from '../app/logger';
@@ -11,8 +11,8 @@ import { CosmosDeviceRepo } from '../infra/cosmos-device-repo';
 import { CosmosLoanRepo } from '../infra/cosmos-loan-repo';
 import { openContainer } from '../infra/cosmos-options';
 
-// Reads a required setting when it is needed (not at import time).
-// The error names the variable but never echoes any value.
+// Reads a required setting when it's needed (not at import time)
+// The error names the var but never echoes any val
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value || value.trim() === '') {
@@ -27,7 +27,7 @@ function openConfiguredContainer(containerVariable: string) {
   const container = requireEnv(containerVariable);
   const key = requireEnv('COSMOS_KEY');
 
-  // One line saying which database this instance talks to. Never log the key.
+  // One line saying which db this instance talks to (never log key)
   console.info(
     JSON.stringify({
       event: 'repo.created',
@@ -42,7 +42,7 @@ function openConfiguredContainer(containerVariable: string) {
 let deviceRepo: DeviceRepo | undefined;
 let loanRepo: LoanRepo | undefined;
 
-/** Lazy singleton: built on first use, then reused for every later call. */
+/** Lazy singleton (built on first use then reused for every later call) */
 export function getDeviceRepo(): DeviceRepo {
   deviceRepo ??= new CosmosDeviceRepo(openConfiguredContainer('COSMOS_DEVICES_CONTAINER_ID'));
   return deviceRepo;

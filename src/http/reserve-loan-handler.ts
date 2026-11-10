@@ -1,6 +1,6 @@
-// HTTP edge for POST /loans: translates a request into the use case and the outcome into a
-// response. No business rules here. Kept outside src/functions so it can be tested without
-// registering a function.
+// HTTP edge for POST /loans that translates a request into the use case and the outcome into a
+// response (no business rules here) kept outside src/functions so it can be tested without
+// registering a function
 
 import type { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { reserveLoan } from '../app/reserve-loan';
@@ -11,7 +11,7 @@ import { createFunctionLogger } from './function-logger';
 
 export type BuildDeps = (log: Logger) => ReserveLoanDeps;
 
-// Flattens an error to one line (message plus the top of the stack).
+// Flattens an error to one line (message + the top of the stack)
 const describeError = (error: unknown) =>
   error instanceof Error
     ? {
@@ -44,7 +44,7 @@ export function createReserveLoanHandler(buildDeps: BuildDeps) {
     };
 
     try {
-      // TEMPORARY: the student id comes from a header until Auth0 token checks replace it.
+      // TEMP: the student id comes from a header until Auth0 token checks replace it
       const studentId = request.headers.get('x-student-id') ?? '';
       const idempotencyKey = request.headers.get('idempotency-key') ?? '';
 
@@ -80,7 +80,7 @@ export function createReserveLoanHandler(buildDeps: BuildDeps) {
           jsonBody: errorBody('invalid_request', 'The request is not valid.', error.issues),
         });
       }
-      // Full detail goes to the log; the caller only gets a safe, consistent error shape.
+      // Full detail goes to the log (caller only gets a safe and consistent error).
       log.error('http.loans.reserve.failed', {
         durationMs: Date.now() - startedAt,
         ...describeError(error),

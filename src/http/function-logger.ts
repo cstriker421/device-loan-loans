@@ -1,5 +1,5 @@
-// Turns the application's Logger port into Azure Functions logging:
-// one structured JSON line per event, so each one stays a single row in Log Analytics.
+// Turns the app's Logger port into Azure Functions logging
+// one structured JSON line per event, so each one stays a single row in log analytics
 
 import type { InvocationContext } from '@azure/functions';
 import type { LogData, Logger } from '../app/logger';

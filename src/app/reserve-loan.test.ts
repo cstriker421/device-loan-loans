@@ -15,11 +15,11 @@ import type { Versioned } from '../domain/persistence';
 const NOW = new Date('2026-11-10T09:00:00.000Z');
 const tick = () => Promise.resolve();
 
-// In-memory repos that honour the port contracts (versions, conflicts, unique keys).
+// In-memory repos that honour the port contracts (versions, conflicts, unique keys)
 class MemDevices implements DeviceRepo {
   store = new Map<string, { device: Device; version: number }>();
   calls = 0;
-  /** Runs just before a replace is applied, to simulate another request getting in first. */
+  /** Runs just before a replace is applied to simulate another request getting in first */
   beforeReplace?: (device: Device) => Promise<void> | void;
   failReplaceWith?: (device: Device) => Error | undefined;
 

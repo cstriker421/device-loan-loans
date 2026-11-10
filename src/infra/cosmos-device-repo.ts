@@ -1,5 +1,5 @@
-// Infrastructure layer: Cosmos DB adapter for DeviceRepo.
-// Container: partition key /modelId. The version token is the document's ETag.
+// Infra layer (Cosmos DB adapter for DeviceRepo)
+// Container partition key /modelId (he version token is the document's ETag)
 
 import type { Container } from '@azure/cosmos';
 import type { Device } from '../domain/device';
@@ -9,7 +9,7 @@ import type { Versioned } from '../domain/persistence';
 import { restoreDevice } from '../domain/restore';
 import { hasStatusCode } from './cosmos-options';
 
-/** The stored shape. Deliberately separate from the domain type. */
+/** The stored shape (deliberately separate from the domain type) */
 type DeviceDocument = {
   id: string;
   modelId: string; // partition key

@@ -1,6 +1,5 @@
-// Application layer: the logging the use cases need, as a port. No Azure, no console here.
-// An adapter (in the HTTP layer) turns each call into one structured log line.
-
+// App layer (logging the use cases need but as a port)
+// An adapter (HTTP layer) turns each call into one log line
 export type LogData = Readonly<Record<string, unknown>>;
 
 export interface Logger {

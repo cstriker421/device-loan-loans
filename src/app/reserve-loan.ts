@@ -1,10 +1,9 @@
-// Application layer: reserve a device of a given model for a student.
-// Coordinates the ports and the domain rules. No SDKs, no I/O of its own.
-//
-// Flow: validate -> replay if this idempotency key was already used -> claim an available
-// unit using its version (moving on if someone else gets there first) -> create the loan ->
-// undo the claim if the loan cannot be created.
+// App layer (reserves a device of a given model for a user)
+// Coordinates the ports and the domain rules (no SDKs or I/O of its own)
 
+// validate -> replay if the idempotency key is already used -> claims an available
+// unit using its version (moving on if someone else gets there first) -> creates the loan ->
+// undoes the claim if the loan cannot be created
 import { createLoan } from '../domain/loan';
 import type { Loan } from '../domain/loan';
 import { DomainValidationError } from '../domain/errors';
@@ -32,9 +31,9 @@ export type ReserveLoanInput = {
 
 export type ReserveLoanResult =
   | { outcome: 'reserved'; loan: Loan }
-  /** This idempotency key was used before: the original loan is returned, nothing new is made. */
+  /** This idempotency key was used before (the original loan is returned + nothing new is made) */
   | { outcome: 'already-reserved'; loan: Loan }
-  /** No unit of this model could be secured. A normal business outcome, not an error. */
+  /** No unit of this model could be secured (normal business outcome, NOT an error) */
   | { outcome: 'unavailable' };
 
 const BATCH_SIZE = 5; // units fetched per attempt
@@ -49,7 +48,7 @@ export async function reserveLoan(
   const { devices, loans, log, newId, now } = deps;
   const loanId = newId();
 
-  // 1. Validate the request before touching storage ("draft" stands in for the unit).
+  // Validates the request before touching storage ("draft" stands in for the unit)
   createLoan({ id: loanId, deviceId: 'draft', ...input }, now());
 
   const replay = (existing: Loan): ReserveLoanResult => {
@@ -60,11 +59,11 @@ export async function reserveLoan(
     return { outcome: 'already-reserved', loan: existing };
   };
 
-  // 2. A retry of an earlier request returns the earlier loan.
+  // Retries of an earlier request returns the earlier loan
   const earlier = await loans.findByIdempotencyKey(input.studentId, input.idempotencyKey);
   if (earlier) return replay(earlier);
 
-  // Moves a unit from available to reserved, or reports that someone else got there first.
+  // Moves a unit from available to reserved or reports that someone else got there first
   const tryClaim = async (candidate: Versioned<Device>): Promise<Claim | undefined> => {
     const reserved = reserveDevice(candidate.item);
     try {
@@ -76,7 +75,7 @@ export async function reserveLoan(
     }
   };
 
-  // Puts a claimed unit back. Never throws, so the original problem is what surfaces.
+  // Puts a claimed unit back (never throws, so the original problem is shown)
   const release = async (claim: Claim): Promise<void> => {
     try {
       await devices.replace(releaseDevice(claim.device), claim.version);
@@ -104,7 +103,7 @@ export async function reserveLoan(
       }
 
       try {
-        // 3. We hold a unit: record the loan.
+        // Hold a unit by recording the loan
         const loan = createLoan({ id: loanId, deviceId: claim.device.id, ...input }, now());
         await loans.create(loan);
         log.info('loan.reserved', {
@@ -115,10 +114,10 @@ export async function reserveLoan(
         });
         return { outcome: 'reserved', loan };
       } catch (error) {
-        // 4. Could not record it: hand the unit back.
+        // Couldn't record it, so hand the unit back
         await release(claim);
         if (error instanceof DuplicateError) {
-          // A concurrent request with the same key won; return its loan.
+          // A concurrent request with the same key won, the loan is returned
           const winner = await loans.findByIdempotencyKey(input.studentId, input.idempotencyKey);
           if (winner) return replay(winner);
         }

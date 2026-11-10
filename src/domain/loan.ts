@@ -1,4 +1,4 @@
-// Domain layer: a loan of one device to one student. Pure rules, no I/O, no SDKs.
+// Domain layer (a loan of one device to one student, just rules)
 // Time is passed in as `now` so the rules are deterministic and easy to test.
 
 import { DomainValidationError, InvalidTransitionError } from './errors';
@@ -12,7 +12,7 @@ export type Loan = Readonly<{
   deviceId: string;
   modelId: string;
   studentId: string;
-  /** Client-supplied key that makes retries of the same reserve request safe. */
+  /** Client-supplied key that makes retries of the same reserve request safe */
   idempotencyKey: string;
   status: LoanStatus;
   reservedAt: string; // ISO 8601, UTC
@@ -23,7 +23,7 @@ export type Loan = Readonly<{
   returnedBy?: string;
 }>;
 
-/** What callers hand to the factory. Untrusted: it may come straight from JSON. */
+/** What callers hand to the factory (untrusted) */
 export type NewLoan = {
   id: string;
   deviceId: string;
@@ -58,7 +58,7 @@ function assertNow(now: unknown): asserts now is Date {
   }
 }
 
-/** Factory: validates the input and returns a new reserved loan with its due date. */
+/** Factory (validates the input and returns a new reserved loan with its due date) */
 export function createLoan(input: NewLoan, now: Date): Loan {
   assertNow(now);
   const issues: string[] = [];
@@ -95,7 +95,7 @@ export function createLoan(input: NewLoan, now: Date): Loan {
   });
 }
 
-/** reserved -> collected. `staffId` is the staff member who handed the device over. */
+/** reserved -> collected. `staffId` is the staff member who hands the device over */
 export function collectLoan(loan: Loan, staffId: string, now: Date): Loan {
   assertNow(now);
   assertActor(staffId, 'staffId');
@@ -110,7 +110,7 @@ export function collectLoan(loan: Loan, staffId: string, now: Date): Loan {
   });
 }
 
-/** collected -> returned. `staffId` is the staff member who received it back. */
+/** collected -> returned. `staffId` is the staff member who receives it back */
 export function returnLoan(loan: Loan, staffId: string, now: Date): Loan {
   assertNow(now);
   assertActor(staffId, 'staffId');
@@ -125,6 +125,6 @@ export function returnLoan(loan: Loan, staffId: string, now: Date): Loan {
   });
 }
 
-/** True when a collected loan is past its due date. */
+/** True when a collected loan is past its due date */
 export const isOverdue = (loan: Loan, now: Date): boolean =>
   loan.status === 'collected' && now.getTime() > new Date(loan.dueAt).getTime();
