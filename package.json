@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/functions/*.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rimraf dist",
+    "prestart": "npm run clean && npm run build",
+    "start": "func start",
+    "test": "npm run build && node --test \"dist/src/**/*.test.js\""
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.10.2",
+    "@azure/functions": "^4.0.0",
+    "@azure/identity": "^4.14.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}
