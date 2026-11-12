@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "device-loan-loans",
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/functions/*.js",
@@ -21,5 +21,8 @@
     "@types/node": "^22.20.5",
     "rimraf": "^5.0.0",
     "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
